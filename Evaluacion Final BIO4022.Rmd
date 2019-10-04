@@ -35,7 +35,7 @@ La diabetes es una enfermedad crónica donde el páncreas no presenta la capacid
  ![](imagen2.jpg) 
  
 ## Análisis de datos
-En este trabajo nos centraremos en el estudio de la base de datos  *Diabetes 130 US hospitals for years 1999-2008* que concentra la informacion de varios pacientes ingresados a la clínica y que fueron diagnosticados con diabetes y la siguiente información: 
+En este trabajo nos centraremos en el estudio de la base de datos  *Diabetes 130 US hospitals for years 1999-2008* que concentra la informacion de varios pacientes ingresados a la clínica y que fueron diagnosticados con diabetes y la siguiente información: `r (diabetic_data (names)) 
 
 ```{r}
 Datos_diabetes_1 <- diabetic_data %>% select(race, gender, age, time_in_hospital, num_lab_procedures, num_procedures, num_medications, max_glu_serum)
@@ -45,10 +45,31 @@ Datos_diabetes_1 <- Datos_diabetes_1 %>%  filter(Raza != "?")
 Datos2 <- Datos_diabetes_1 %>% group_by(Edad, Raza) %>%  summarise(Media_Tiempo_en_clínica = mean(Tiempo_en_clínica),  Número_procedimientos_lab = mean(número_procedimientos_lab), Número_procedimientos = mean(número_procedimientos), Número_medicamentos = mean(número_medicamentos))
 
 
-ggplot(Datos_diabetes_1, aes(x = Tiempo_en_clínica, y = Edad, color = Raza, group = Raza)) +
+ggplot(Datos_diabetes_1, aes(x = Edad, y = Tiempo_en_clínica, color = Raza, group = Raza)) +
   geom_point() + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
+Si realizamos un gráfico poniendo en el eje de la abscisa la Edad y en el eje de la ordena el Tiempo en la clínica agrupado de acuerdo a la Raza, se obtiene un grafico que no nos indica mucha información.
+```{r}
+ggplot(Datos_diabetes_1, aes(x = Edad, 
+                  y = Tiempo_en_clínica, 
+                  col = Raza)) +
+  geom_point() 
+```
 
+## Nuevo gráfico
+Si realizamos otro tipo de represntacion gráfica de los datos: 
+```{r}
+Datos2 <- Datos_diabetes_1 %>% group_by(Raza, Edad) %>%  summarise(Media_Tiempo_en_clínica = mean(Tiempo_en_clínica),  Número_procedimientos_lab = mean(número_procedimientos_lab), Número_procedimientos = mean(número_procedimientos), Número_medicamentos = mean(número_medicamentos))
+
+ggplot(Datos2, aes(x = Edad, y = Media_Tiempo_en_clínica)) + geom_boxplot() + 
+    geom_jitter(aes(color = Raza))
+```
+
+A partir de este gráfico se observa una tendencia de que la Media del Tiempo en clínica aumenta a medida que progresa la edad de los pacientes.
+
+## Modelo
+
+De acuerdo a la representación de los datos anteriores podemos sugerir los siguientes modelos
 
