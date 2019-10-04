@@ -25,33 +25,28 @@ diabetic_data <- read_csv("diabetic_data.csv")
 ```
 ## Diabetes
 
-La diabetes es una enfermedad crónica donde el páncreas no presenta la capacidad de secretar los niveles de Insulina necesarios para la captación de la glucosa en la sangre. 
-Existen dos tipos de diabetes:
+La diabetes es una enfermedad crónica donde el páncreas no presenta la capacidad de secretar los niveles de Insulina necesarios para la captación de la glucosa en la sangre. Existen dos tipos de diabetes:
 
-- Diabetes mellitus 1: la cual se genera por una ingesta calorica elevada y constante en el tiempo que tienen como efecto un alza en los nieveles de azúcar en la sangre, el cual no es capaz de ser regulado por los niveles de insulina secretado por el páncreas. 
+- Diabetes mellitus 1: la cual se genera por una ingesta calorica elevada y constante en el tiempo que tiene como efecto un alza en los nieveles de azúcar en la sangre, el cual no es capaz de ser regulado por los niveles de insulina secretado por el páncreas. 
 
 - Diabetes tipo 2: sus antecedentes tienen un componente genético, donde las células del páncreas secreto poco o nada de insulina.
   
 - En EEUU durante los años 1990 y 2009 hubo un alza en el numero de casos diagnosticados con diabetes, lo que es de gran preocupación a problemas de salud pública.
-
  ![](imagen2.jpg) 
  
 ## Análisis de datos
-
 En este trabajo nos centraremos en el estudio de la base de datos  *Diabetes 130 US hospitals for years 1999-2008* que concentra la informacion de varios pacientes ingresados a la clínica y que fueron diagnosticados con diabetes y la siguiente información: 
-
-
-
 
 ```{r}
 Datos_diabetes_1 <- diabetic_data %>% select(race, gender, age, time_in_hospital, num_lab_procedures, num_procedures, num_medications, max_glu_serum)
 Datos_diabetes_1 <- Datos_diabetes_1 %>%  rename(Raza = race, Género = gender, Edad = age, Tiempo_en_clínica = time_in_hospital, número_procedimientos_lab = num_lab_procedures, número_procedimientos = num_procedures, número_medicamentos = num_medications, Máximo_glucosa_sérica = max_glu_serum )
+Datos_diabetes_1 <- Datos_diabetes_1 %>%  filter(Raza != "?")
+
+Datos2 <- Datos_diabetes_1 %>% group_by(Edad, Raza) %>%  summarise(Media_Tiempo_en_clínica = mean(Tiempo_en_clínica),  Número_procedimientos_lab = mean(número_procedimientos_lab), Número_procedimientos = mean(número_procedimientos), Número_medicamentos = mean(número_medicamentos))
 
 
-
-
-ggplot(Datos_diabetes_1, aes(x = Edad, y = Tiempo_en_clínica, color = Raza, group = Raza)) +
-  geom_line() + 
+ggplot(Datos_diabetes_1, aes(x = Tiempo_en_clínica, y = Edad, color = Raza, group = Raza)) +
+  geom_point() + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
