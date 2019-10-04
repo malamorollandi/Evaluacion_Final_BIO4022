@@ -1,35 +1,59 @@
 ---
 title: "Evaluación Final BIO4022"
-author: "Martina_alamo_R"
-date: "10/3/2019"
-output: ioslides_presentation
+author: "Martina_Alamo_R"
+date: "`r format(Sys.time(), '%d/%m/%Y')`"
+output:
+  ioslides_presentation:
+    widescreen: true
+    incremental: true
+    logo: puc_logo.jpg
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(kableExtra)
+options("kableExtra.html.bsTable" = T) 
 ```
 
-## R Markdown
 
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+library(tidyverse)
+library(broom)
+library(ggplot2)
+library(readr)
+diabetic_data <- read_csv("diabetic_data.csv")
+```
+## Diabetes
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+La diabetes es una enfermedad crónica donde el páncreas no presenta la capacidad de secretar los niveles de Insulina necesarios para la captación de la glucosa en la sangre. 
+Existen dos tipos de diabetes:
 
-## Slide with Bullets
+- Diabetes mellitus 1: la cual se genera por una ingesta calorica elevada y constante en el tiempo que tienen como efecto un alza en los nieveles de azúcar en la sangre, el cual no es capaz de ser regulado por los niveles de insulina secretado por el páncreas. 
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+- Diabetes tipo 2: sus antecedentes tienen un componente genético, donde las células del páncreas secreto poco o nada de insulina.
+  
+- En EEUU durante los años 1990 y 2009 hubo un alza en el numero de casos diagnosticados con diabetes, lo que es de gran preocupación a problemas de salud pública.
 
-## Slide with R Output
+ ![](imagen2.jpg) 
+ 
+## Análisis de datos
 
-```{r cars, echo = TRUE}
-summary(cars)
+En este trabajo nos centraremos en el estudio de la base de datos  *Diabetes 130 US hospitals for years 1999-2008* que concentra la informacion de varios pacientes ingresados a la clínica y que fueron diagnosticados con diabetes y la siguiente información: 
+
+
+
+
+```{r}
+Datos_diabetes_1 <- diabetic_data %>% select(race, gender, age, time_in_hospital, num_lab_procedures, num_procedures, num_medications, max_glu_serum)
+Datos_diabetes_1 <- Datos_diabetes_1 %>%  rename(Raza = race, Género = gender, Edad = age, Tiempo_en_clínica = time_in_hospital, número_procedimientos_lab = num_lab_procedures, número_procedimientos = num_procedures, número_medicamentos = num_medications, Máximo_glucosa_sérica = max_glu_serum )
+
+
+
+
+ggplot(Datos_diabetes_1, aes(x = Edad, y = Tiempo_en_clínica, color = Raza, group = Raza)) +
+  geom_line() + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-## Slide with Plot
 
-```{r pressure}
-plot(pressure)
-```
 
