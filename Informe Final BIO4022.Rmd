@@ -1,6 +1,6 @@
 ---
-title: "Informa Final BIO4022"
-author: "Martina_alamo_R"
+title: "Informe Final BIO4022"
+author: "Martina_Alamo_R"
 date:  "`r format(Sys.time(), '%d/%m/%Y')`"
 output: pdf_document
 ---
@@ -9,18 +9,29 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-hello sir how are you 
-```{r cars}
-summary(cars)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(kableExtra)
+suppressMessages(suppressWarnings(library(tidyverse, quietly = TRUE)))
 ```
 
-## Including Plots
+```{r}
+library(tidyverse)
+library(broom)
+library(ggplot2)
+library(readr)
+diabetic_data <- read_csv("diabetic_data.csv")
+```
+## Introducción 
 
-You can also embed plots, for example:
+#Diabetes 
+
+La diabetes es una enfermedad crónica donde el páncreas no presenta la capacidad de secretar los niveles de Insulina necesarios para la captación de la glucosa en la sangre. Existen dos tipos de diabetes:
+
+- Diabetes mellitus 1: la cual se genera por una ingesta calorica elevada y constante en el tiempo que tiene como efecto un alza en los niveles de azúcar en la sangre, el cual no es capaz de ser regulado por los niveles de insulina secretado por el páncreas. 
+- Diabetes tipo 2: sus antecedentes tienen un componente genético, donde las células del páncreas secreto poco o nada de insulina.
+- En EEUU durante los años 1990 y 2009 hubo un alza en el número de casos diagnosticados con diabetes, lo que es de gran preocupación a problemas de salud pública.
+
+
 
 
