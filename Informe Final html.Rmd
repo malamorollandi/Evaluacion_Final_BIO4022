@@ -1,28 +1,20 @@
 ---
-title: "Untitled"
-author: "Martina_alamo_R"
-<<<<<<< HEAD
+title: "Informe Final"
+author: "Martina Alamo R"
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
-
 output:
+  pdf_document: default
   html_document: 
     fig_caption: yes
-  pdf_document: default
-=======
-date: "10/9/2019"
-output: html_document
->>>>>>> 395441ac8ffa9cb0d21849742febc56a5e6f1800
+bibliography: Bibliografia.bib
+
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
-<<<<<<< HEAD
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(kableExtra)
-suppressMessages(suppressWarnings(library(tidyverse, quietly = TRUE)))
+suppressMessages(suppressWarnings(library(tidyverse, quietly = FALSE)))
 ```
 
 ```{r}
@@ -43,7 +35,7 @@ La diabetes es una enfermedad crónica donde el páncreas no presenta la capacid
 
 - Diabetes tipo 2: sus antecedentes tienen un componente genético, donde las células del páncreas secreto poco o nada de insulina.
 
-- En EEUU durante los años 1990 y 2009 hubo un alza en el número de casos diagnosticados con diabetes, lo que es de gran preocupación a problemas de salud pública.
+- En EEUU durante los años 1990 y 2009 hubo un alza en el número de casos diagnosticados con diabetes, lo que es de gran preocupación a problemas de salud pública [@Strack2014].
 
  ![](imagen2.jpg) 
 
@@ -53,24 +45,91 @@ Datos_diabetes_1 <- Datos_diabetes_1 %>%  rename(Raza = race, Género = gender, 
 Datos_diabetes_1 <- Datos_diabetes_1 %>%  filter(Raza != "?")
 
 Datos2 <- Datos_diabetes_1 %>% group_by(Edad, Raza) %>%  summarise(Media_Tiempo_en_clínica = mean(Tiempo_en_clínica),  Número_procedimientos_lab = mean(número_procedimientos_lab), Número_procedimientos = mean(número_procedimientos), Número_medicamentos = mean(número_medicamentos))
-=======
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+ 
+## Análisis de datos
 
-You can also embed plots, for example:
+En este trabajo nos centraremos en el estudio de la base de datos  *Diabetes 130 US hospitals for years 1999-2008* [Diabetes 130 US hospitals for years 1999-2008 ]("https://www.kaggle.com/brandao/diabetes#diabetic_data.csv") que concentra la informacion de varios pacientes ingresados a la clínica y que fueron diagnosticados con diabetes y la siguiente información: `r (names(Datos2))`. 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+
+ggplot(Datos_diabetes_1, aes(x = Edad, y = Tiempo_en_clínica, color = Raza, group = Raza)) +
+  geom_point() + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
->>>>>>> 395441ac8ffa9cb0d21849742febc56a5e6f1800
+Si realizamos un gráfico poniendo en el eje de la abscisa la Edad y en el eje de la ordena el Tiempo en la clínica agrupado de acuerdo a la Raza, se obtiene un grafico que no nos indica mucha información.
+
+## Datos agrupados
+
+
+
+```{r}
+Datos4 <- Datos2 %>%  group_by(Raza, Edad) %>% summarise(Media_Tiempo_en_clínica= mean(Media_Tiempo_en_clínica), Número_procedimientos_lab = mean(Número_procedimientos_lab), Número_procedimientos = mean(Número_procedimientos), Número_medicamentos = mean(Número_medicamentos))
+
+Datos5 <- Datos4 %>%  group_by(Raza) %>% summarise(Media_Tiempo_en_clínica= mean(Media_Tiempo_en_clínica), Media_Número_procedimientos_lab = mean(Número_procedimientos_lab), Media_Número_medicamentos = mean(Número_medicamentos))
+ 
+knitr::kable(Datos5, caption ="Tabla 1: Pacientes con diabetes de acuerdo a su Raza y la media del tiempo de permanencia en clínica, el número de procedimientos realizados y el número de medicamnetos administrados durante la permanencia en la clínica.", digits = 2)
+```
+
+
+## Nuevo gráfico
+Si realizamos otro tipo de represntacion gráfica de los datos: 
+```{r fig.align= "center"}
+Datos2 <- Datos_diabetes_1 %>% group_by(Raza, Edad) %>%  summarise(Media_Tiempo_en_clínica = mean(Tiempo_en_clínica),  Número_procedimientos_lab = mean(número_procedimientos_lab), Número_procedimientos = mean(número_procedimientos), Número_medicamentos = mean(número_medicamentos))
+
+ggplot(Datos2, aes(x = Edad, y = Media_Tiempo_en_clínica)) + geom_boxplot() + 
+    geom_jitter(aes(color = Raza))
+```
+
+A partir de este gráfico se observa una tendencia de que la Media del Tiempo en clínica aumenta a medida que progresa la edad de los pacientes.
+
+## Modelo
+
+De acuerdo a la representación de los datos anteriores podemos sugerir los siguientes modelos
+
+```{r, echo=FALSE}
+## Evaluando Modelos que se ajusten a los Datos2
+
+Fit1 <- lm(Media_Tiempo_en_clínica ~ Edad, data = Datos2)
+
+Sum1 <- glance(Fit1)
+
+Fit2 <- lm(Media_Tiempo_en_clínica ~ Edad + Raza, data = Datos2)
+
+Sum2 <- glance(Fit2)
+
+Modelo1 <- glance(Fit1) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit1")
+Modelo2 <- glance(Fit2) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit2")
+Modelos <- bind_rows(Modelo1, Modelo2) %>% arrange(AIC)
+
+Tabla2 <- bind_rows(Sum1, Sum2) %>% arrange(AIC)
+Tabla3 <- Tabla2 %>% select(r.squared, p.value, logLik, AIC, BIC, deviance)
+
+knitr::kable(Tabla3, caption = "Tabla 2: Análisis de los modelos propuestos.", digits = 2) 
+
+```
+
+
+De acuerdo a los valores de AIC de cada modelo descritos en la Tabla 2, el segundo modelo es el que mejor explica los resultados que corresponde al modelo 2
+
+
+## Evaluando si el modelo se ajusta a los datos predecidos
+
+```{r, echo=FALSE}
+
+## prediciendo los modelos de acuerdo a los datos generados a partir de los datos propocionados por la base de datos de diabtes
+
+DF <- expand.grid(list(Raza = c("AfricanAmerican", "Asian", "Caucasian", "Hispanic", "Other"), Edad = c("[0-10)", "[10-20)", "[20-30)", "[30-40)", "[40-50)", "[50-60)", "[60-70)", "[70-80)", "[80-90)", "[90-100)")))
+
+
+DF$Pred <- predict(Fit1, DF, se.fit = TRUE)$fit
+DF$SE <- predict(Fit1, DF, se.fit = TRUE)$se.fit
+
+
+## Graficar las prediccioones
+
+ggplot(DF, aes(x= Edad, y = Pred)) + geom_boxplot(aes(ymin = Pred - SE, ymax = Pred + SE))
+
+```
