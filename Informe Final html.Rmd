@@ -1,8 +1,12 @@
 ---
-title: "Informe Final BIO4022"
-author: "Martina_Alamo_R"
-date:  "`r format(Sys.time(), '%d/%m/%Y')`"
-output: pdf_document
+title: "Untitled"
+author: "Martina_alamo_R"
+date: "`r format(Sys.time(), '%d/%m/%Y')`"
+
+output:
+  html_document: 
+    fig_caption: yes
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -43,34 +47,3 @@ Datos_diabetes_1 <- Datos_diabetes_1 %>%  rename(Raza = race, Género = gender, 
 Datos_diabetes_1 <- Datos_diabetes_1 %>%  filter(Raza != "?")
 
 Datos2 <- Datos_diabetes_1 %>% group_by(Edad, Raza) %>%  summarise(Media_Tiempo_en_clínica = mean(Tiempo_en_clínica),  Número_procedimientos_lab = mean(número_procedimientos_lab), Número_procedimientos = mean(número_procedimientos), Número_medicamentos = mean(número_medicamentos))
-```
-
- 
-## Análisis de datos
-
-En este trabajo nos centraremos en el estudio de la base de datos  *Diabetes 130 US hospitals for years 1999-2008* [Diabetes 130 US hospitals for years 1999-2008 ]("https://www.kaggle.com/brandao/diabetes#diabetic_data.csv") que concentra la informacion de varios pacientes ingresados a la clínica y que fueron diagnosticados con diabetes y la siguiente información: `r (names(Datos2))`. 
-
-```{r}
-
-ggplot(Datos_diabetes_1, aes(x = Edad, y = Tiempo_en_clínica, color = Raza, group = Raza)) +
-  geom_point() + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-```
-
-Si realizamos un gráfico poniendo en el eje de la abscisa la Edad y en el eje de la ordena el Tiempo en la clínica agrupado de acuerdo a la Raza, se obtiene un grafico que no nos indica mucha información.
-
-## Datos agrupados
-
-
-h
-```{r}
-Datos4 <- Datos2 %>%  group_by(Raza, Edad) %>% summarise(Media_Tiempo_en_clínica= mean(Media_Tiempo_en_clínica), Número_procedimientos_lab = mean(Número_procedimientos_lab), Número_procedimientos = mean(Número_procedimientos), Número_medicamentos = mean(Número_medicamentos))
-
-Datos5 <- Datos4 %>%  group_by(Raza) %>% summarise(Media_Tiempo_en_clínica= mean(Media_Tiempo_en_clínica), Media_Número_procedimientos_lab = mean(Número_procedimientos_lab), Media_Número_medicamentos = mean(Número_medicamentos))
- 
-knitr::kable(Datos5, caption ="Tabla 1: Pacientes con diabetes de acuerdo a su Raza y la media del tiempo de permanencia en clínica, el número de procedimientos realizados y el número de medicamnetos administrados durante la permanencia en la clínica.", digits = 2)
-```
-
-
-
-
