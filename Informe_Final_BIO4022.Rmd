@@ -7,12 +7,16 @@ output:
   html_document:
     df_print: paged
 fig_caption: yes
+keep_tex: yes
+header-includes: 
+- \usepackage{graphicx}
+- \usepackage{float}
 bibliography: Bibliografia.bib
 ---
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.pos = 'H')
 library(kableExtra)
 suppressMessages(suppressWarnings(library(tidyverse, quietly = FALSE)))
 ```
@@ -80,13 +84,13 @@ Datos5 <- Datos4 %>%  group_by(Raza) %>% summarise(Media_Tiempo_en_clínica= mea
 ```
 
 ```{r}
-kable(Datos5, caption ="Pacientes con diabetes de acuerdo a su Raza y la media del tiempo de permanencia en clínica.", digits = 2)
+kable(Datos5, caption ="Pacientes con diabetes de acuerdo a su Raza y la media del tiempo de permanencia en clínica.", digits = 2) %>% kable_styling(latex_options = "HOLD_position") 
 ```
 Por otro lado tenemos los datos de los pacientes con diabetes de acuerdo a su edad y la media del número de procedimientos de laboratorio y medicamentos administrados durante su permanencia en la clínica (Tabla 2)
 ```{r}
 Datos6 <- Datos4 %>%  group_by(Raza) %>% summarise(Media_Número_procedimientos_lab = mean(Número_procedimientos_lab), Media_Número_medicamentos = mean(Número_medicamentos))
  
-kable(Datos6, caption ="Pacientes con diabetes de acuerdo a su Raza y la media del número de medicamentos y el número de procedimientos realizados durante la permanencia en clínica.", digits = 2)
+kable(Datos6, caption ="Pacientes con diabetes de acuerdo a su Raza y la media del número de medicamentos y el número de procedimientos realizados durante la permanencia en clínica.", digits = 2) %>%  kable_styling(latex_options = "HOLD_position") 
 ```
 
 
@@ -99,7 +103,7 @@ Si realizamos otro tipo de representación gráfica de los datos, de acuerdo a l
 
 Datos2 <- Datos_diabetes_1 %>% group_by(Raza, Edad) %>%  summarise(Media_Tiempo_en_clínica = mean(Tiempo_en_clínica),  Número_procedimientos_lab = mean(número_procedimientos_lab), Número_procedimientos = mean(número_procedimientos), Número_medicamentos = mean(número_medicamentos))
 
-ggplot(Datos2, aes(x = Edad, y = Media_Tiempo_en_clínica)) + geom_boxplot() + 
+ggplot(Datos2, aes(x = Edad, y = Media_Tiempo_en_clínica)) + geom_boxplot(color = Raza) + 
     geom_jitter(aes(color = Raza))
 ```
  
@@ -132,7 +136,7 @@ Tabla3 <- Tabla2 %>% select(r.squared, p.value, logLik, AIC, BIC, deviance)
 
 ```{r}
 
-knitr::kable(Modelos, caption = "Análisis de los modelos propuestos (modelos lineales).", digits = 2) 
+knitr::kable(Modelos, caption = "Análisis de los modelos propuestos (modelos lineales).", digits = 2) %>%  kable_styling(latex_options = "HOLD_position") 
 ```
 
 
