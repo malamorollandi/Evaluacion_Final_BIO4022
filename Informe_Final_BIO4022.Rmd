@@ -136,7 +136,7 @@ knitr::kable(Modelos, caption = "Análisis de los modelos propuestos (modelos li
 ```
 
 
-De acuerdo a los valores de AIC de cada modelo descritos en la Tabla 2, el modelo que mejor explica los resultados corresponde al modelo con un AIC de  `r (Modelos %>% select(AIC, Modelo) %>% filter(Modelo == "Fit2"))`.
+De acuerdo a los valores de AIC de cada modelo descritos en la Tabla 3, el modelo que mejor explica los resultados corresponde al modelo con un AIC de  `r (Modelos %>% select(AIC, Modelo) %>% filter(Modelo == "Fit2"))`.
 
 ### Evaluación del modelo 
 
