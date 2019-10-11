@@ -2,7 +2,10 @@
 title: "Informe Final BIO4022"
 author: "Martina Alamo R"
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 fig_caption: yes
 bibliography: Bibliografia.bib
 ---
@@ -11,7 +14,7 @@ bibliography: Bibliografia.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(kableExtra)
-suppressMessages(suppressWarnings(library(tidyverse, quietly = TRUE)))
+suppressMessages(suppressWarnings(library(tidyverse, quietly = FALSE)))
 ```
 
 ```{r}
@@ -32,12 +35,9 @@ La diabetes es una enfermedad crónica donde el páncreas no presenta la capacid
 
 - Diabetes tipo 2: sus antecedentes tienen un componente genético, donde las células del páncreas secreto poco o nada de insulina.
 
-![La diabetes es una de las enfermedades con alta incidencia en EEUU](imagen2.jpg)
-
 En EEUU durante los años 1990 y 2009 hubo un alza en el número de casos diagnosticados con diabetes, lo que es de gran preocupación a problemas de salud pública´.
 
 
- 
  
 ```{r}
 Datos_diabetes_1 <- diabetic_data %>% select(race, gender, age, time_in_hospital, num_lab_procedures, num_procedures, num_medications, max_glu_serum)
@@ -55,9 +55,9 @@ Datos2 <- Datos_diabetes_1 %>% group_by(Edad, Raza) %>%  summarise(Media_Tiempo_
 
 En este trabajo nos centraremos en el estudio de la base de datos  *Diabetes 130 US hospitals for years 1999-2008* [Diabetes 130 US hospitals for years 1999-2008 ]("https://www.kaggle.com/brandao/diabetes#diabetic_data.csv") que concentra la informacion de varios pacientes ingresados a la clínica y que fueron diagnosticados con diabetes y la siguiente información: `r (names(Datos2))` [@Strack2014]. 
 
-Si realizamos un gráfico poniendo en el eje de la abscisa la Edad y en el eje de la ordena el Tiempo en la clínica agrupado de acuerdo a la Raza, se obtiene un grafico que no nos indica mucha información.
+Si realizamos un gráfico poniendo en el eje de la abscisa la Edad y en el eje de la ordena el Tiempo en la clínica agrupado de acuerdo a la Raza, se obtiene un gráfico que no nos indica mucha información [@Wickham2014].
 
-```{r, fig.cap= "Primera aproximación de la visualización gráfica de los datos. En este gráfico se muestran los pacientes de acuerdo a su edad (en intervalos de 10 años) versus su tiempo de permanencia en la clínica (días) de acuerdo a la Raza representada." }
+```{r, fig.align='center', fig.cap= "Primera aproximación de la visualización gráfica de los datos. En este gráfico se muestran los pacientes de acuerdo a su edad (en intervalos de 10 años) versus su tiempo de permanencia en la clínica (días) de acuerdo a la Raza representada."}
 
 ggplot(Datos_diabetes_1, aes(x = Edad, y = Tiempo_en_clínica, color = Raza, group = Raza)) +
   geom_point() + 
@@ -65,33 +65,45 @@ ggplot(Datos_diabetes_1, aes(x = Edad, y = Tiempo_en_clínica, color = Raza, gro
 ```
 
 
+En este gráfico (Figura 2) no se observa ninguna tendencia de los datos que nos pueda indicar un comportamiento que pueda ser ajustado a un modelo. Sin embargo, lo interesante es la visualización gráfica de cómo se representan los datos en la Figura 2 ya que nos permite ver el tiempo de permanencia en clínica de cada paciente de acuerdo a su Edad y Raza.
 
 
 ### Datos agrupados
 
-A partir del gráfico anterior (Figura 2) nos podemos percatar que es necesario realizar una segunda manipulacion de los datos. Para ello se realizó una agrupación de los pacientes de acuerdo a su edad (definido en intervalos de 10 años) y agrupados respecto a la Raza que los determina.
+A partir del gráfico anterior (Figura 2) nos podemos percatar que es necesario realizar una segunda manipulacion de los datos. Para ello se realizó una agrupación de los datos de los pacientes de acuerdo a su edad (definido en intervalos de 10 años) y agrupados respecto a la Raza que los determina para ver su permanencia en la clínica (Tabla 1).
 
 ```{r}
 Datos4 <- Datos2 %>%  group_by(Raza, Edad) %>% summarise(Media_Tiempo_en_clínica= mean(Media_Tiempo_en_clínica), Número_procedimientos_lab = mean(Número_procedimientos_lab), Número_procedimientos = mean(Número_procedimientos), Número_medicamentos = mean(Número_medicamentos))
 
-Datos5 <- Datos4 %>%  group_by(Raza) %>% summarise(Media_Tiempo_en_clínica= mean(Media_Tiempo_en_clínica), Media_Número_procedimientos_lab = mean(Número_procedimientos_lab), Media_Número_medicamentos = mean(Número_medicamentos))
+Datos5 <- Datos4 %>%  group_by(Raza) %>% summarise(Media_Tiempo_en_clínica= mean(Media_Tiempo_en_clínica))
  
-knitr::kable(Datos5, caption ="Pacientes con diabetes de acuerdo a su Raza y la media del tiempo de permanencia en clínica, el número de procedimientos realizados y el número de medicamnetos administrados durante la permanencia en la clínica.", digits = 2)
+```
+
+```{r}
+kable(Datos5, caption ="Pacientes con diabetes de acuerdo a su Raza y la media del tiempo de permanencia en clínica.", digits = 2)
+```
+Por otro lado tenemos los datos de los pacientes con diabetes de acuerdo a su edad y la media del número de procedimientos de laboratorio y medicamentos administrados durante su permanencia en la clínica (Tabla 2)
+```{r}
+Datos6 <- Datos4 %>%  group_by(Raza) %>% summarise(Media_Número_procedimientos_lab = mean(Número_procedimientos_lab), Media_Número_medicamentos = mean(Número_medicamentos))
+ 
+kable(Datos6, caption ="Pacientes con diabetes de acuerdo a su Raza y la media del número de medicamentos y el número de procedimientos realizados durante la permanencia en clínica.", digits = 2)
 ```
 
 
 
-### Nuevo gráfico
-Si realizamos otro tipo de representación gráfica de los datos, de acuerdo a la tabla anterior (Tabla1), se obtiene el siguiente gráfico:
+### Recopilación visual de los datos.
 
-```{r, fig.align='center'}
+Si realizamos otro tipo de representación gráfica de los datos, de acuerdo a la tabla anterior (Tabla1), se obtiene el siguiente gráfico (Figura 3)
+
+```{r, fig.align='center', fig.cap= " Representación final de los datos. En este gráfico se muestra el Tiempo de permanencia en clínica (días) de los pacientes de acuerdo a su edad (intervalo de 10 años) y defenidos por su raza."}
+
 Datos2 <- Datos_diabetes_1 %>% group_by(Raza, Edad) %>%  summarise(Media_Tiempo_en_clínica = mean(Tiempo_en_clínica),  Número_procedimientos_lab = mean(número_procedimientos_lab), Número_procedimientos = mean(número_procedimientos), Número_medicamentos = mean(número_medicamentos))
 
 ggplot(Datos2, aes(x = Edad, y = Media_Tiempo_en_clínica)) + geom_boxplot() + 
     geom_jitter(aes(color = Raza))
 ```
  
-A partir de este gráfico se observa una tendencia de que la Media del Tiempo en clínica aumenta a medida que progresa la edad de los pacientes.
+A partir de este gráfico se observa una tendencia de que la Media del Tiempo de permanencia en clínica aumenta a medida que progresa la edad de los paciente. Sin embargo, no se observa alguna tendencia en la permanencia del tiempo en clínica de los pacientes de acuerdo a su raza.
 
 ### Modelo
 
@@ -108,24 +120,30 @@ Fit2 <- lm(Media_Tiempo_en_clínica ~ Edad + Raza, data = Datos2)
 
 Sum2 <- glance(Fit2)
 
-Modelo1 <- glance(Fit1) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit1")
-Modelo2 <- glance(Fit2) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit2")
+Modelo1 <- glance(Fit1) %>% dplyr::select(r.squared, AIC, p.value) %>% mutate(Modelo = "Fit1") %>% mutate(Ecuación = "Edad") 
+Modelo2 <- glance(Fit2) %>% dplyr::select(r.squared, AIC, p.value) %>% mutate(Modelo = "Fit2") %>% mutate(Ecuación = "Edad + Raza")
 Modelos <- bind_rows(Modelo1, Modelo2) %>% arrange(AIC)
 
 Tabla2 <- bind_rows(Sum1, Sum2) %>% arrange(AIC)
 Tabla3 <- Tabla2 %>% select(r.squared, p.value, logLik, AIC, BIC, deviance)
 
-knitr::kable(Tabla3, caption = "Tabla 2: Análisis de los modelos propuestos.", digits = 2) 
 
 ```
 
+```{r}
 
-De acuerdo a los valores de AIC de cada modelo descritos en la Tabla 2, el segundo modelo es el que mejor explica los resultados que corresponde al modelo 2
+knitr::kable(Modelos, caption = "Análisis de los modelos propuestos (modelos lineales).", digits = 2) 
+```
 
 
-###Evaluando si el modelo se ajusta a los datos predecidos
+De acuerdo a los valores de AIC de cada modelo descritos en la Tabla 2, el modelo que mejor explica los resultados corresponde al modelo con un AIC de  `r (Modelos %>% select(AIC, Modelo) %>% filter(Modelo == "Fit2"))`.
 
-```{r, , fig.align='center', echo=FALSE}
+### Evaluación del modelo 
+
+Para evaluar si el modelo con el mejor AIC (AIC de menor valor) es capaz de ajustarse a los datos, se construyó una nueva base de datos a partir de los datos proporcionados por *Diabetes 130 US hospitals for years 1999-2008*. Estos "nuevos datos" incluyen el tiempo de permanencia en la clínica (días) versus la edad de los pacientes (en intervalos de 10 años).
+
+
+```{r, fig.cap= "Evaluación del modelo: en este gráfico se muestra como el modelo lineal Fit2 se ajusta y explica la permanencia del tiempo en clínica de los pacientes con diabetes de acuerdo a su edad y raza."}
 
 ## prediciendo los modelos de acuerdo a los datos generados a partir de los datos propocionados por la base de datos de diabtes
 
@@ -139,8 +157,22 @@ DF$SE <- predict(Fit1, DF, se.fit = TRUE)$se.fit
 ## Graficar las prediccioones
 
 ggplot(DF, aes(x= Edad, y = Pred)) + geom_boxplot(aes(ymin = Pred - SE, ymax = Pred + SE))
-
 ```
 
-## Referencias
+Como se puede observar en la Figura 3, el modelo con el menor AIC, el Fit2 presenta una distribución de los datos similar al gráfico de la Figura 2. Esto nos sugiere que este modelo es capaz de explicar en gran medida el comportamiento de los datos.
+
+### Discusión y Conclusión
+La diabetes es una enfermedad crónica de alta incidencia en el mundo, y en este estudio de gran relevancia es su alta incidencia en EEUU. Durante la época de 1990 a 2009, hubo un gran interés por estudiar la admisión a clínica por pacientes diagnosticados con diabetes.
+
+En este trabajo se realizó un análisis explorativo de la base de datos *Diabetes 130 US hospitals for years 1999-2008* que proporciona una diversa cantidad de información respecto a pacientes admitidos en clínica que presentan diabetes.
+
+Del análisis realizado se determinó que la media del tiempo de permanencia en clínica de los pacientes diagnosticados con diabetes aumenta de acuerdo a los años de los pacientes admitidos, a mayor edad es más probable que su tiempo de permanencia en la clínica sea alto. Esto se puede deber al caracter crónico de la enfermedad que a medida que transcurre el tiempo hay un deterioro de los órganos, tales como el hígado, páncreas, corazón, entre otros.
+
+A partir de la visualización gráfica de los datos (Figura 2) se propusieron dos modelos lineales que pudiesen explicar los datos, o que se ajusten a ellos. El primero modelo (Fit1) define que la media de permanencia en clínica es explicado por la Edad, mientras que el segundo modelo (Fit2) define que la media de permanecia en clínica es explicado por la Edad más la Raza. El análisis de estos dos modelos determinó que el modelo Fit2 es el que mejor explica los datos de los pacientes con diabetes, ya que presenta un valor de AIC menor. 
+
+La evaluación del modelo Fit2 (Figura 3) nos sugiere que el modelo es capaz de ajustarse a los datos al presentar una gráfica similar a la representación gráfica de los datos mpstrados en la Figura2. Además, se muestra que el valor de cuadrado de r es mayor en el modelos Fit2 en comparación al Fit1. Esto nos permite concluir que el modelo Fit2 es el mejor modelo que explca los datos de *Diabetes 130 US hospitals for years 1999-2008*. 
+
+
+
+### Referencias
 
