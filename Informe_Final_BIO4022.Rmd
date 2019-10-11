@@ -107,7 +107,7 @@ A partir de este gráfico se observa una tendencia de que la Media del Tiempo de
 
 ### Modelo
 
-De acuerdo a la representación de los datos anteriores podemos sugerir los siguientes modelos
+De acuerdo a la representación de los datos anteriores podemos sugerir los siguientes modelos (Tabla 3): 
 
 ```{r, echo=FALSE}
 ## Evaluando Modelos que se ajusten a los Datos2
